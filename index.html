@@ -1,467 +1,239 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Absen AF PRODUCTIONS</title>
-  <style>
-    :root {
-      --primary: #0d6efd;
-      --success: #198754;
-      --warning: #ffc107;
-      --danger: #dc3545;
-      --gray: #f8f9fa;
-      --dark: #212529;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--gray);
-      color: var(--dark);
-      min-height: 100vh;
-    }
-
-    header {
-      background-color: var(--primary);
-      color: white;
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 1.8rem;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 1rem;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 1rem auto 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    input, textarea, button {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-
-    input:focus, textarea:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background-color: #0b5ed7;
-    }
-
-    .marquee-container {
-      overflow: hidden;
-      background: var(--warning);
-      color: #212529;
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      margin-bottom: 1rem;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 4px;
-    }
-
-    .marquee {
-      display: inline-block;
-      white-space: nowrap;
-      animation: scroll-left 15s linear infinite;
-    }
-
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(100%);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    video {
-      width: 100%;
-      border-radius: 8px;
-      margin-top: 1rem;
-      background: #000;
-    }
-
-    #liveDateTime {
-      text-align: center;
-      margin-top: 1rem;
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
-
-    .riwayat-item {
-      background: var(--gray);
-      padding: 0.75rem;
-      margin-bottom: 0.5rem;
-      border-left: 4px solid var(--primary);
-      border-radius: 4px;
-      font-size: 0.95rem;
-    }
-
-    .admin-tools button {
-      background-color: var(--success);
-    }
-
-    .admin-tools button:hover {
-      background-color: #157347;
-    }
-
-    .chat textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-
-      header {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simulasi Absen AF PRODUCTIONS</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    margin: 0; padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  #loginPage, #absenPage {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    display: none;
+  }
+  #loginPage.active, #absenPage.active {
+    display: block;
+  }
+  h2 {
+    text-align: center;
+    color: #0d6efd;
+    margin-bottom: 1rem;
+  }
+  input, button, textarea {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #0d6efd;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #0b5ed7;
+  }
+  #logoutBtn {
+    background: #dc3545;
+    margin-top: 1rem;
+  }
+  #timeDisplay {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  #riwayatList {
+    margin-top: 1rem;
+    max-height: 180px;
+    overflow-y: auto;
+    background: #eef2ff;
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  video {
+    width: 100%;
+    border-radius: 6px;
+    margin-top: 1rem;
+    background: black;
+  }
+</style>
 </head>
 <body>
 
-  <header>ABSEN AF PRODUCTIONS</header>
+<div id="loginPage" class="active">
+  <h2>Login Absen</h2>
+  <input type="text" id="loginNoInduk" placeholder="🆔 No Induk" />
+  <input type="password" id="loginPassword" placeholder="🔒 Password" />
+  <button id="loginBtn">Login</button>
+</div>
 
-  <div class="marquee-container">
-    <div class="marquee">📢 Semangat bekerja! Jangan lupa absen masuk & pulang tepat waktu 💪</div>
+<div id="absenPage">
+  <h2>Absensi AF PRODUCTIONS</h2>
+  <div id="timeDisplay"></div>
+
+  <form id="absenForm" onsubmit="return false;">
+    <button id="btnMasuk">✅ Absen Masuk</button>
+    <button id="btnPulang" style="background-color: #dc3545;">⏹️ Absen Pulang</button>
+  </form>
+
+  <video id="video" autoplay muted playsinline></video>
+
+  <div id="riwayatContainer">
+    <h3>📋 Riwayat Absen</h3>
+    <div id="riwayatList">Belum ada data absen.</div>
   </div>
 
-  <!-- Halaman Login -->
-  <div id="loginPage" class="container">
-    <h2>Login Absen</h2>
-    <input type="text" id="loginNoInduk" placeholder="🆔 No Induk" autocomplete="off" />
-    <input type="password" id="loginPassword" placeholder="🔒 Password" autocomplete="off" />
-    <button id="btnLogin">Masuk</button>
-  </div>
+  <button id="logoutBtn">Logout</button>
+</div>
 
-  <!-- Halaman Absen -->
-  <div id="absenPage" class="container hidden">
-    <div>
-      <strong>Selamat datang, <span id="userDisplay"></span></strong>
-    </div>
-    <div id="liveDateTime"></div>
+<script>
+  // --- Variables ---
+  const loginPage = document.getElementById("loginPage");
+  const absenPage = document.getElementById("absenPage");
+  const loginNoInduk = document.getElementById("loginNoInduk");
+  const loginPassword = document.getElementById("loginPassword");
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const timeDisplay = document.getElementById("timeDisplay");
+  const btnMasuk = document.getElementById("btnMasuk");
+  const btnPulang = document.getElementById("btnPulang");
+  const riwayatList = document.getElementById("riwayatList");
+  const video = document.getElementById("video");
 
-    <video id="video" autoplay playsinline></video>
+  let currentUser = null;
+  let absenStatus = { masuk: false, pulang: false };
+  let riwayat = [];
 
-    <form id="absenForm" onsubmit="return false;">
-      <button type="button" id="btnMasuk">✅ Absen Masuk</button>
-      <button type="button" id="btnPulang" style="background-color: var(--danger);">⏹️ Absen Pulang</button>
-    </form>
+  // --- Functions ---
 
-    <div class="riwayat">
-      <h3>📋 Riwayat Absen</h3>
-      <div id="riwayatList">Memuat data...</div>
-    </div>
+  function updateTime() {
+    const now = new Date();
+    timeDisplay.textContent = now.toLocaleString("id-ID", { dateStyle: "full", timeStyle: "medium" });
+  }
 
-    <div class="admin-tools hidden" id="adminPanel">
-      <h3>⚙️ Admin Panel</h3>
-      <button id="downloadExcel">📥 Unduh Data Excel</button>
-    </div>
-
-    <div class="chat">
-      <h3>💬 Kirim Pesan ke IT</h3>
-      <textarea id="chatPesan" placeholder="Tulis kendala atau pesan Anda di sini..."></textarea>
-      <button id="kirimChat">📨 Kirim</button>
-    </div>
-
-    <button id="btnLogout" style="margin-top: 1.5rem; background-color: #dc3545;">🚪 Logout</button>
-  </div>
-
-  <script>
-    const apiUrl = "https://script.google.com/macros/s/AKfycbxIt5rLjpI9hreKfaa6YtolBaGAHQwD06oxKb0NllISpksNW_sXtGshLI3pJykJtTXr/exec";
-
-    // Elemen
-    const loginPage = document.getElementById("loginPage");
-    const absenPage = document.getElementById("absenPage");
-    const btnLogin = document.getElementById("btnLogin");
-    const userDisplay = document.getElementById("userDisplay");
-    const btnMasuk = document.getElementById("btnMasuk");
-    const btnPulang = document.getElementById("btnPulang");
-    const riwayatList = document.getElementById("riwayatList");
-    const chatPesan = document.getElementById("chatPesan");
-    const btnKirimChat = document.getElementById("kirimChat");
-    const adminPanel = document.getElementById("adminPanel");
-    const downloadExcel = document.getElementById("downloadExcel");
-    const btnLogout = document.getElementById("btnLogout");
-    const video = document.getElementById("video");
-
-    // Login state
-    let currentUser = null;
-    let currentPass = null;
-    let statusAbsen = { masuk: false, pulang: false };
-
-    // Cek session login di localStorage
-    function cekLogin() {
-      const savedUser = localStorage.getItem("user");
-      const savedPass = localStorage.getItem("pass");
-      if(savedUser && savedPass) {
-        currentUser = savedUser;
-        currentPass = savedPass;
-        statusAbsen = JSON.parse(localStorage.getItem("statusAbsen_" + currentUser)) || { masuk: false, pulang: false };
-        showAbsenPage();
-        return true;
-      }
-      showLoginPage();
-      return false;
+  function tampilkanRiwayat() {
+    if(riwayat.length === 0) {
+      riwayatList.textContent = "Belum ada data absen.";
+      return;
     }
+    riwayatList.innerHTML = "";
+    riwayat.forEach(item => {
+      riwayatList.innerHTML += `<div>[${item.waktu}] - ${item.tipe.toUpperCase()} - User: ${item.user}</div>`;
+    });
+  }
 
-    // Tampilkan halaman login
-    function showLoginPage() {
-      loginPage.classList.remove("hidden");
-      absenPage.classList.add("hidden");
-      stopCamera();
+  function mulaiKamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Browser tidak mendukung akses kamera.");
+      return;
     }
-
-    // Tampilkan halaman absen
-    function showAbsenPage() {
-      loginPage.classList.add("hidden");
-      absenPage.classList.remove("hidden");
-      userDisplay.textContent = currentUser;
-      startCamera();
-      updateDateTime();
-      tampilkanRiwayat();
-      cekAdmin();
-    }
-
-    // Mulai kamera
-    let stream = null;
-    async function startCamera() {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
         video.srcObject = stream;
-      } catch(e) {
-        alert("Tidak dapat mengakses kamera. Pastikan izin sudah diberikan.");
-      }
-    }
+      })
+      .catch(() => alert("Gagal mengakses kamera."));
+  }
 
-    // Hentikan kamera
-    function stopCamera() {
-      if(stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-      }
+  function stopKamera() {
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
       video.srcObject = null;
     }
+  }
 
-    // Update waktu dan tanggal live
-    let timerDateTime = null;
-    function updateDateTime() {
-      const liveDateTime = document.getElementById("liveDateTime");
-      function update() {
-        const now = new Date();
-        liveDateTime.textContent = now.toLocaleString();
-      }
-      update();
-      clearInterval(timerDateTime);
-      timerDateTime = setInterval(update, 1000);
+  function simpanRiwayat(tipe) {
+    const waktu = new Date().toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" });
+    riwayat.push({ waktu, tipe, user: currentUser });
+    localStorage.setItem("riwayatAbsen", JSON.stringify(riwayat));
+    tampilkanRiwayat();
+  }
+
+  function loadRiwayat() {
+    const data = localStorage.getItem("riwayatAbsen");
+    if (data) {
+      riwayat = JSON.parse(data);
     }
+    tampilkanRiwayat();
+  }
 
-    // Simpan status absen di localStorage per user
-    function simpanStatusAbsen() {
-      localStorage.setItem("statusAbsen_" + currentUser, JSON.stringify(statusAbsen));
+  function login() {
+    const user = loginNoInduk.value.trim();
+    const pass = loginPassword.value.trim();
+
+    if (!user || !pass) {
+      alert("Isi No Induk dan Password.");
+      return;
     }
-
-    // Simpan riwayat di localStorage (sementara)
-    function simpanRiwayat(tipe, lat, lng) {
-      const now = new Date().toISOString();
-      let riwayatKey = "riwayatAbsen_" + currentUser;
-      let riwayatDataRaw = localStorage.getItem(riwayatKey);
-      let riwayatData = riwayatDataRaw ? JSON.parse(riwayatDataRaw) : [];
-      riwayatData.push({ tipe, lat, lng, waktu: now });
-      localStorage.setItem(riwayatKey, JSON.stringify(riwayatData));
+    // Simulasi validasi
+    if(pass !== "1234") {
+      alert("Password salah!");
+      return;
     }
+    currentUser = user;
+    absenStatus = { masuk: false, pulang: false };
+    loginPage.classList.remove("active");
+    absenPage.classList.add("active");
+    loadRiwayat();
+    mulaiKamera();
+    updateTime();
+    setInterval(updateTime, 1000);
+  }
 
-    // Tampilkan riwayat dari localStorage
-    function tampilkanRiwayat() {
-      let riwayatKey = "riwayatAbsen_" + currentUser;
-      let riwayatDataRaw = localStorage.getItem(riwayatKey);
-      let riwayatData = riwayatDataRaw ? JSON.parse(riwayatDataRaw) : [];
+  function logout() {
+    stopKamera();
+    currentUser = null;
+    absenStatus = { masuk: false, pulang: false };
+    riwayat = [];
+    localStorage.removeItem("riwayatAbsen");
+    absenPage.classList.remove("active");
+    loginPage.classList.add("active");
+    loginNoInduk.value = "";
+    loginPassword.value = "";
+  }
 
-      riwayatList.innerHTML = "";
-      if (riwayatData.length === 0) {
-        riwayatList.innerHTML = "<p>Belum ada riwayat absen.</p>";
-        return;
-      }
-      riwayatData.slice(-10).reverse().forEach(item => {
-        riwayatList.innerHTML += `
-          <div class="riwayat-item">
-            <strong>${item.tipe.toUpperCase()}</strong><br>
-            Waktu: ${new Date(item.waktu).toLocaleString()}<br>
-            Lokasi: (${item.lat.toFixed(4)}, ${item.lng.toFixed(4)})
-          </div>
-        `;
-      });
+  function absen(tipe) {
+    if(tipe === "pulang" && !absenStatus.masuk) {
+      alert("Kamu belum absen masuk!");
+      return;
     }
-
-    // Cek apakah user admin
-    function cekAdmin() {
-      if(currentUser === "IT001") {
-        adminPanel.classList.remove("hidden");
-      } else {
-        adminPanel.classList.add("hidden");
-      }
+    if(absenStatus[tipe]) {
+      alert(`Kamu sudah absen ${tipe}.`);
+      return;
     }
+    // Simulasi absen berhasil
+    absenStatus[tipe] = true;
+    simpanRiwayat(tipe);
+    alert(tipe === "masuk" ? "✅ Selamat bekerja!" : "✅ Terima kasih, hati-hati di jalan!");
+  }
 
-    // Kirim data absen
-    async function absen(tipe) {
-      if (!currentUser || !currentPass) {
-        alert("Harap login dulu.");
-        return;
-      }
-      if(tipe === "pulang" && !statusAbsen.masuk) {
-        alert("Kamu belum absen masuk.");
-        return;
-      }
-      if(statusAbsen[tipe]) {
-        alert(`Kamu sudah absen ${tipe}.`);
-        return;
-      }
+  // --- Event Listeners ---
+  loginBtn.addEventListener("click", login);
+  logoutBtn.addEventListener("click", logout);
+  btnMasuk.addEventListener("click", () => absen("masuk"));
+  btnPulang.addEventListener("click", () => absen("pulang"));
 
-      navigator.geolocation.getCurrentPosition(async position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-
-        // Capture selfie
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0);
-        const selfieData = canvas.toDataURL("image/jpeg");
-
-        const data = {
-          type: "absen",
-          user: currentUser,
-          pass: currentPass,
-          tipe,
-          lat,
-          lng,
-          selfie: selfieData
-        };
-
-        try {
-          const res = await fetch(apiUrl, {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: { "Content-Type": "application/json" }
-          });
-          const result = await res.json();
-
-          if(result.status === "success") {
-            alert(`Absen ${tipe} berhasil.`);
-            statusAbsen[tipe] = true;
-            simpanStatusAbsen();
-            simpanRiwayat(tipe, lat, lng);
-            tampilkanRiwayat();
-          } else {
-            alert("Gagal absen: " + result.message);
-          }
-        } catch(e) {
-          alert("Terjadi kesalahan saat mengirim data absen.");
-          console.error(e);
-        }
-      }, error => {
-        alert("Tidak dapat mengambil lokasi. Pastikan GPS aktif.");
-      }, { enableHighAccuracy: true, timeout: 10000 });
-    }
-
-    // Login handler
-    btnLogin.addEventListener("click", () => {
-      const noInduk = document.getElementById("loginNoInduk").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
-      if(!noInduk || !password) {
-        alert("No Induk dan Password harus diisi.");
-        return;
-      }
-      // Contoh verifikasi sederhana (bisa disambungkan ke backend)
-      if(noInduk === "user1" && password === "12345" ||
-         noInduk === "user2" && password === "54321" ||
-         noInduk === "IT001" && password === "adminpass") {
-        currentUser = noInduk;
-        currentPass = password;
-        localStorage.setItem("user", currentUser);
-        localStorage.setItem("pass", currentPass);
-        statusAbsen = JSON.parse(localStorage.getItem("statusAbsen_" + currentUser)) || { masuk: false, pulang: false };
-        showAbsenPage();
-      } else {
-        alert("No Induk atau Password salah.");
-      }
-    });
-
-    // Tombol absen masuk & pulang
-    btnMasuk.addEventListener("click", () => absen("masuk"));
-    btnPulang.addEventListener("click", () => absen("pulang"));
-
-    // Kirim chat ke IT (dummy)
-    btnKirimChat.addEventListener("click", () => {
-      const pesan = chatPesan.value.trim();
-      if(!pesan) {
-        alert("Isi pesan terlebih dahulu.");
-        return;
-      }
-      alert("Pesan terkirim ke IT:\n" + pesan);
-      chatPesan.value = "";
-      // Di sini bisa kamu tambahkan kirim data ke backend Google Sheets atau server chat
-    });
-
-    // Logout
-    btnLogout.addEventListener("click", () => {
-      if(confirm("Yakin ingin logout?")) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("pass");
-        localStorage.removeItem("statusAbsen_" + currentUser);
-        currentUser = null;
-        currentPass = null;
-        statusAbsen = { masuk: false, pulang: false };
-        showLoginPage();
-      }
-    });
-
-    // Download Excel (dummy)
-    downloadExcel.addEventListener("click", () => {
-      alert("Fungsi unduh Excel belum diimplementasikan.");
-      // Implementasi mengunduh data Excel bisa disambungkan ke backend Google Apps Script
-    });
-
-    // Inisialisasi halaman
-    cekLogin();
-  </script>
+</script>
 
 </body>
 </html>
