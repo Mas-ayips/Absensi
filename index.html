@@ -1,35 +1,174 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><meta charset="UTF-8" /><title>Test Absen</title></head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Absen AF PRODUCTIONS</title>
+  <style>
+    /* ... gaya CSS sama seperti sebelumnya ... */
+  </style>
+</head>
 <body>
-  <input id="user" placeholder="User ID" />
-  <select id="tipe">
-    <option value="masuk">Masuk</option>
-    <option value="pulang">Pulang</option>
-  </select>
-  <button onclick="kirim()">Kirim Absen</button>
 
-  <script>
-    const url = "URL_WEB_APP_KAMU"; // Ganti dengan URL web app kamu
+<header>ABSEN AF PRODUCTIONS</header>
+<marquee>Masukkan teks berjalan di sini! Misalnya pengumuman penting atau semangat kerja 💪</marquee>
 
-    function kirim() {
-      const user = document.getElementById("user").value.trim();
-      const tipe = document.getElementById("tipe").value;
+<div class="container">
 
-      if (!user) {
-        alert("Isi User ID dulu ya");
+  <input type="text" id="noInduk" placeholder="No Induk"/>
+  <input type="password" id="password" placeholder="Password"/>
+  
+  <button onclick="absen('masuk')">Absen Masuk</button>
+  <button onclick="absen('pulang')">Absen Pulang</button>
+
+  <div class="riwayat" id="riwayatBox">
+    <h3>📋 Riwayat Absen</h3>
+    <div id="riwayatList">Memuat data...</div>
+  </div>
+
+  <div class="admin-tools" id="adminPanel" style="display: none;">
+    <h3>⚙️ Admin Panel (IT Only)</h3>
+    <button onclick="downloadExcel()">📥 Download Data Excel</button>
+  </div>
+
+  <div class="chat">
+    <h3>💬 Chat ke IT</h3>
+    <textarea id="chatPesan" placeholder="Ada kendala? Tulis di sini..."></textarea>
+    <button onclick="kirimChat()">Kirim ke IT</button>
+  </div>
+
+</div>
+
+<script>
+const dummyWebhook = "GANTI_DENGAN_URL_DEPLOYED_GOOGLE_APPS_SCRIPT";
+
+let statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || {
+  masuk: false,
+  pulang: false
+};
+
+function tampilkanRiwayat() {
+  fetch(dummyWebhook)
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("riwayatList");
+      if (data.length === 0) {
+        box.innerHTML = "Belum ada data absensi.";
         return;
       }
+      box.innerHTML = "";
+      data.forEach(r => {
+        box.innerHTML += `<div class="riwayat-item">[${new Date(r.waktu).toLocaleString()}] - ${r.tipe.toUpperCase()} - User: ${r.user} - Lokasi: ${r.lat}, ${r.lng}</div>`;
+      });
+    })
+    .catch(() => {
+      document.getElementById("riwayatList").innerHTML = "Gagal memuat data riwayat.";
+    });
+}
 
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({user: user, tipe: tipe}),
-        headers: {"Content-Type": "application/json"}
-      })
-      .then(res => res.json())
-      .then(data => alert("Response: " + JSON.stringify(data)))
-      .catch(err => alert("Error: " + err.message));
+function absen(tipe) {
+  const user = document.getElementById("noInduk").value.trim();
+  const pass = document.getElementById("password").value.trim();
+
+  if (!user || !pass) {
+    return alert("Isi No Induk dan Password terlebih dahulu.");
+  }
+
+  if (tipe === "pulang" && !statusAbsen.masuk) {
+    return alert("Kamu belum absen masuk.");
+  }
+
+  if (statusAbsen[tipe]) {
+    return alert(`Kamu sudah absen ${tipe}.`);
+  }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    fetch(dummyWebhook, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "absen",
+        user: user,
+        tipe: tipe,
+        lat: lat,
+        lng: lng
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.status === "success") {
+        statusAbsen[tipe] = true;
+        localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
+        tampilkanRiwayat();
+
+        if (tipe === "masuk") {
+          alert("✅ Selamat bekerja dan utamakan keselamatan!");
+        } else {
+          alert("✅ Hati-hati di jalan, terima kasih sudah bekerja dengan baik!");
+        }
+      } else {
+        alert("Gagal mengirim data: " + resp.message);
+      }
+    })
+    .catch(() => alert("Gagal mengirim data absen."));
+  }, () => {
+    alert("Gagal mendapatkan lokasi. Aktifkan GPS.");
+  });
+}
+
+function downloadExcel() {
+  alert("✅ Data absensi berhasil diunduh (simulasi).");
+}
+
+function kirimChat() {
+  const user = document.getElementById("noInduk").value.trim();
+  const pesan = document.getElementById("chatPesan").value.trim();
+  if (!pesan) return alert("Isi pesan terlebih dahulu.");
+
+  fetch(dummyWebhook, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "chat",
+      user: user,
+      message: pesan
+    }),
+    headers: {
+      "Content-Type": "application/json"
     }
-  </script>
+  })
+  .then(res => res.json())
+  .then(resp => {
+    if (resp.status === "success") {
+      alert("📨 Pesan berhasil dikirim ke IT.");
+      document.getElementById("chatPesan").value = "";
+    } else {
+      alert("Gagal mengirim pesan: " + resp.message);
+    }
+  })
+  .catch(() => alert("Gagal mengirim pesan."));
+}
+
+function cekAdmin() {
+  const user = document.getElementById("noInduk").value.trim();
+  if (user === "IT001") {
+    document.getElementById("adminPanel").style.display = "block";
+  } else {
+    document.getElementById("adminPanel").style.display = "none";
+  }
+}
+
+document.getElementById("noInduk").addEventListener("input", cekAdmin);
+
+window.onload = () => {
+  tampilkanRiwayat();
+  setInterval(tampilkanRiwayat, 30000); // refresh tiap 30 detik
+};
+</script>
+
 </body>
 </html>
