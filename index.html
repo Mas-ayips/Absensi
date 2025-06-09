@@ -82,7 +82,7 @@
 
   <div class="riwayat" id="riwayatBox">
     <h3>📋 Riwayat Absen</h3>
-    <div id="riwayatList">Belum ada data absensi.</div>
+    <div id="riwayatList">Memuat data...</div>
   </div>
 
   <div class="admin-tools" id="adminPanel" style="display: none;">
@@ -101,22 +101,28 @@
 <script>
 const dummyWebhook = "https://script.google.com/macros/s/AKfycbzB-QjKUwCBm6Xj_5gecpYDiRNX_l5AGt-Ubl-duj0j9qpBOzsxGDkw0FUyiYggKOIU/exec";
 
-let riwayat = JSON.parse(localStorage.getItem("riwayat")) || [];
 let statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || {
   masuk: false,
   pulang: false
 };
 
 function tampilkanRiwayat() {
-  const box = document.getElementById("riwayatList");
-  if (riwayat.length === 0) {
-    box.innerHTML = "Belum ada data absensi.";
-    return;
-  }
-  box.innerHTML = "";
-  riwayat.forEach(r => {
-    box.innerHTML += `<div class="riwayat-item">[${r.waktu}] - ${r.tipe.toUpperCase()} - Lokasi: ${r.lat.toFixed(5)}, ${r.lng.toFixed(5)}</div>`;
-  });
+  fetch(dummyWebhook)
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("riwayatList");
+      if (data.length === 0) {
+        box.innerHTML = "Belum ada data absensi.";
+        return;
+      }
+      box.innerHTML = "";
+      data.forEach(r => {
+        box.innerHTML += `<div class="riwayat-item">[${new Date(r.waktu).toLocaleString()}] - ${r.tipe.toUpperCase()} - User: ${r.user} - Lokasi: ${r.lat}, ${r.lng}</div>`;
+      });
+    })
+    .catch(() => {
+      document.getElementById("riwayatList").innerHTML = "Gagal memuat data riwayat.";
+    });
 }
 
 function absen(tipe) {
@@ -140,9 +146,7 @@ function absen(tipe) {
     const lng = pos.coords.longitude;
 
     const waktu = new Date().toLocaleString();
-    riwayat.push({ waktu, tipe, lat, lng });
     statusAbsen[tipe] = true;
-    localStorage.setItem("riwayat", JSON.stringify(riwayat));
     localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
     tampilkanRiwayat();
 
@@ -207,9 +211,12 @@ function cekAdmin() {
 }
 
 document.getElementById("noInduk").addEventListener("input", cekAdmin);
-window.onload = tampilkanRiwayat;
+
+window.onload = () => {
+  tampilkanRiwayat();
+  setInterval(tampilkanRiwayat, 30000); // refresh tiap 30 detik
+};
 </script>
 
 </body>
 </html>
-a
