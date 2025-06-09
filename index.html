@@ -99,7 +99,7 @@
 </div>
 
 <script>
-const dummyWebhook = "https://script.google.com/macros/s/AKfycbzB-QjKUwCBm6Xj_5gecpYDiRNX_l5AGt-Ubl-duj0j9qpBOzsxGDkw0FUyiYggKOIU/exec";
+const dummyWebhook = "https://script.google.com/macros/s/AKfycbxIt5rLjpI9hreKfaa6YtolBaGAHQwD06oxKb0NllISpksNW_sXtGshLI3pJykJtTXr/exec";
 
 let statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || {
   masuk: false,
@@ -145,12 +145,10 @@ function absen(tipe) {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    const waktu = new Date().toLocaleString();
     statusAbsen[tipe] = true;
     localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
     tampilkanRiwayat();
 
-    // Kirim ke webhook Google Apps Script
     fetch(dummyWebhook, {
       method: "POST",
       body: JSON.stringify({
