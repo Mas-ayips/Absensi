@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Absen AF PRODUCTIONS - Login dengan Password</title>
+  <title>Absen AF PRODUCTIONS</title>
   <style>
     :root {
       --primary: #0d6efd;
@@ -24,6 +24,9 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: var(--gray);
       color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -59,7 +62,8 @@
       }
     }
 
-    .container {
+    main {
+      flex-grow: 1;
       max-width: 600px;
       margin: 2rem auto;
       background: white;
@@ -68,7 +72,7 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
-    input, button, textarea {
+    input, textarea, button {
       width: 100%;
       margin-top: 1rem;
       padding: 0.75rem;
@@ -95,15 +99,38 @@
       background-color: #0b5ed7;
     }
 
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #b02a37;
+    }
+
     .hidden {
       display: none;
     }
 
-    .riwayat, .chat {
+    #video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+    }
+
+    #snapshot {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      display: none;
+    }
+
+    .riwayat {
       margin-top: 2rem;
     }
 
-    .riwayat h3, .chat h3 {
+    .riwayat h3 {
       margin-bottom: 1rem;
       color: var(--primary);
     }
@@ -115,30 +142,19 @@
       border-left: 4px solid var(--primary);
       border-radius: 4px;
       font-size: 0.95rem;
+      word-wrap: break-word;
     }
 
-    .chat textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    video {
-      max-width: 100%;
-      margin-top: 1rem;
-      border-radius: 10px;
-      background: black;
-    }
-
-    .datetime {
-      margin-top: 1rem;
-      font-weight: bold;
-      font-size: 1.1rem;
+    #liveDateTime {
+      margin-top: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
       text-align: center;
-      color: var(--primary);
+      font-size: 1.1rem;
     }
 
     @media (max-width: 600px) {
-      .container {
+      main {
         margin: 1rem;
         padding: 1.5rem;
       }
@@ -156,185 +172,223 @@
     <div class="marquee">📢 Semangat bekerja! Jangan lupa absen masuk & pulang tepat waktu 💪</div>
   </div>
 
-  <!-- Halaman Login -->
-  <div class="container" id="loginPage">
-    <h2>Login Absen</h2>
-    <input type="text" id="username" placeholder="🆔 Masukkan No Induk" required />
-    <input type="password" id="password" placeholder="🔒 Masukkan Password" required />
-    <button id="btnLogin">🔓 Login</button>
-  </div>
+  <main>
 
-  <!-- Halaman Absen -->
-  <div class="container hidden" id="absenPage">
+    <!-- Halaman Login -->
+    <section id="loginSection">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="🆔 Username / No Induk" required />
+      <input type="password" id="loginPassword" placeholder="🔒 Password" required />
+      <button id="loginBtn">Login</button>
+    </section>
 
-    <div class="datetime" id="liveDateTime"></div>
+    <!-- Halaman Absen -->
+    <section id="absenSection" class="hidden">
+      <div id="liveDateTime"></div>
 
-    <form id="absenForm">
-      <input type="text" id="noInduk" readonly />
-      <button type="button" id="btnMasuk">✅ Absen Masuk</button>
-      <button type="button" id="btnPulang" style="background-color: var(--danger);">⏹️ Absen Pulang</button>
-    </form>
+      <form id="absenForm" onsubmit="return false;">
+        <button type="button" id="btnMasuk">✅ Absen Masuk</button>
+        <button type="button" id="btnPulang" class="btn-danger">⏹️ Absen Pulang</button>
+      </form>
 
-    <video id="video" autoplay playsinline></video>
+      <video id="video" autoplay playsinline></video>
+      <img id="snapshot" alt="Foto Selfie" />
 
-    <div class="riwayat">
-      <h3>📋 Riwayat Absen</h3>
-      <div id="riwayatList">Memuat data...</div>
-    </div>
+      <div class="riwayat">
+        <h3>📋 Riwayat Absen</h3>
+        <div id="riwayatList">Belum ada data absensi.</div>
+      </div>
 
-    <div class="chat">
-      <h3>💬 Kirim Pesan ke IT</h3>
-      <textarea id="chatPesan" placeholder="Tulis kendala atau pesan Anda di sini..."></textarea>
-      <button id="kirimChat">📨 Kirim</button>
-    </div>
+      <button id="logoutBtn" style="margin-top: 2rem; background-color: #6c757d;">Logout</button>
+    </section>
 
-    <button id="btnLogout" style="margin-top:1.5rem; background:#dc3545;">🚪 Logout</button>
-  </div>
+  </main>
 
   <script>
-    // Data user contoh (username:password)
+    // Data user simulasi (username: password)
     const users = {
       "12345": "password123",
       "67890": "admin2025",
       "alice": "qwerty",
-      "bob": "123456"
+      "bob": "123456",
+      "cindy": "abc123",
+      "dimas": "pass2025",
+      "erika": "letmein",
+      "fajar": "fajar789"
     };
 
+    // State
+    let currentUser = null;
     let statusAbsen = { masuk: false, pulang: false };
-    let currentUser = "";
+    let riwayatAbsensi = [];
 
-    const loginPage = document.getElementById("loginPage");
-    const absenPage = document.getElementById("absenPage");
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    const noIndukField = document.getElementById("noInduk");
+    // Elemen DOM
+    const loginSection = document.getElementById("loginSection");
+    const absenSection = document.getElementById("absenSection");
+    const loginUsername = document.getElementById("loginUsername");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
     const liveDateTime = document.getElementById("liveDateTime");
-    const video = document.getElementById("video");
+    const btnMasuk = document.getElementById("btnMasuk");
+    const btnPulang = document.getElementById("btnPulang");
     const riwayatList = document.getElementById("riwayatList");
-    const chatPesan = document.getElementById("chatPesan");
+    const video = document.getElementById("video");
+    const snapshot = document.getElementById("snapshot");
 
-    // Login dengan validasi user & password
-    document.getElementById("btnLogin").addEventListener("click", () => {
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
+    // Login function
+    loginBtn.addEventListener("click", () => {
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value.trim();
 
       if (!username || !password) {
-        return alert("Mohon isi Username dan Password.");
+        alert("Isi username dan password terlebih dahulu.");
+        return;
       }
-
       if (users[username] && users[username] === password) {
         currentUser = username;
         statusAbsen = { masuk: false, pulang: false };
-        noIndukField.value = currentUser;
-
-        usernameInput.value = "";
-        passwordInput.value = "";
-
-        loginPage.classList.add("hidden");
-        absenPage.classList.remove("hidden");
-
-        startDateTime();
+        riwayatList.innerHTML = "Belum ada data absensi.";
+        loginSection.classList.add("hidden");
+        absenSection.classList.remove("hidden");
+        loginUsername.value = "";
+        loginPassword.value = "";
+        startLiveDateTime();
         startCamera();
         loadRiwayat();
       } else {
-        alert("Username atau Password salah.");
+        alert("Username atau password salah.");
       }
     });
 
     // Logout
-    document.getElementById("btnLogout").addEventListener("click", () => {
-      currentUser = "";
-      statusAbsen = { masuk: false, pulang: false };
-      usernameInput.value = "";
-      passwordInput.value = "";
-      chatPesan.value = "";
-      riwayatList.innerHTML = "Memuat data...";
+    logoutBtn.addEventListener("click", () => {
       stopCamera();
-
-      absenPage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
+      currentUser = null;
+      statusAbsen = { masuk: false, pulang: false };
+      riwayatAbsensi = [];
+      loginSection.classList.remove("hidden");
+      absenSection.classList.add("hidden");
+      riwayatList.innerHTML = "Belum ada data absensi.";
+      liveDateTime.textContent = "";
     });
 
-    // Live Date & Time
-    function startDateTime() {
-      function update() {
-        const now = new Date();
-        liveDateTime.textContent = now.toLocaleString("id-ID", {
-          weekday: "long", year: "numeric", month: "long", day: "numeric",
-          hour: "2-digit", minute: "2-digit", second: "2-digit"
-        });
-      }
-      update();
-      setInterval(update, 1000);
+    // Live date & time update
+    function startLiveDateTime() {
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    }
+    function updateDateTime() {
+      const now = new Date();
+      liveDateTime.textContent = now.toLocaleString("id-ID", { 
+        weekday: "long", year: "numeric", month: "long", day: "numeric", 
+        hour: "2-digit", minute: "2-digit", second: "2-digit" 
+      });
     }
 
-    // Kamera depan
+    // Camera functions
     let stream = null;
-    function startCamera() {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-          .then(s => {
-            stream = s;
-            video.srcObject = stream;
-          })
-          .catch(() => {
-            alert("Tidak dapat mengakses kamera.");
-          });
-      } else {
-        alert("Browser tidak mendukung akses kamera.");
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        snapshot.style.display = "none";
+        video.style.display = "block";
+      } catch {
+        alert("Tidak dapat mengakses kamera.");
       }
     }
     function stopCamera() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
+        stream = null;
       }
+      video.style.display = "none";
+      snapshot.style.display = "none";
     }
 
-    // Simulasi riwayat absen
-    let riwayatData = [];
+    // Ambil foto selfie
+    function takeSnapshot() {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0);
+      const dataUrl = canvas.toDataURL("image/png");
+      snapshot.src = dataUrl;
+      snapshot.style.display = "block";
+      video.style.display = "none";
+      return dataUrl;
+    }
 
-    function loadRiwayat() {
-      if (riwayatData.length === 0) {
+    // Fungsi absen (simulasi)
+    btnMasuk.addEventListener("click", () => absen("masuk"));
+    btnPulang.addEventListener("click", () => absen("pulang"));
+
+    function absen(tipe) {
+      if (!currentUser) {
+        alert("Silakan login dulu.");
+        return;
+      }
+      if (tipe === "pulang" && !statusAbsen.masuk) {
+        alert("Kamu belum absen masuk.");
+        return;
+      }
+      if (statusAbsen[tipe]) {
+        alert(`Kamu sudah absen ${tipe}.`);
+        return;
+      }
+
+      // Ambil lokasi (simulasi pakai random)
+      const lat = (Math.random() * 180 - 90).toFixed(6);
+      const lng = (Math.random() * 360 - 180).toFixed(6);
+
+      // Ambil foto selfie
+      const foto = takeSnapshot();
+
+      const now = new Date();
+
+      // Simpan data absensi lokal
+      const record = {
+        user: currentUser,
+        tipe,
+        waktu: now.toISOString(),
+        lat,
+        lng,
+        foto
+      };
+      riwayatAbsensi.unshift(record);
+      updateRiwayat();
+      statusAbsen[tipe] = true;
+
+      alert(tipe === "masuk" ? "✅ Selamat bekerja!" : "✅ Terima kasih, hati-hati di jalan!");
+    }
+
+    // Update riwayat tampil di halaman
+    function updateRiwayat() {
+      if (riwayatAbsensi.length === 0) {
         riwayatList.innerHTML = "Belum ada data absensi.";
-      } else {
-        renderRiwayat();
+        return;
       }
-    }
-
-    function renderRiwayat() {
       riwayatList.innerHTML = "";
-      riwayatData.forEach(r => {
-        riwayatList.innerHTML += `<div class="riwayat-item">[${new Date(r.waktu).toLocaleString()}] - ${r.tipe.toUpperCase()} - User: ${r.user}</div>`;
+      riwayatAbsensi.forEach(r => {
+        const dateStr = new Date(r.waktu).toLocaleString("id-ID");
+        riwayatList.innerHTML += `
+          <div class="riwayat-item">
+            <strong>${r.tipe.toUpperCase()}</strong> — ${dateStr}<br/>
+            User: ${r.user}<br/>
+            Lokasi (simulasi): ${r.lat}, ${r.lng}<br/>
+            <img src="${r.foto}" alt="Selfie" style="width: 100%; max-width: 200px; border-radius: 8px; margin-top: 0.5rem;" />
+          </div>
+        `;
       });
     }
 
-    // Absen masuk/pulang (simulasi tanpa server)
-    document.getElementById("btnMasuk").addEventListener("click", () => {
-      if (statusAbsen.masuk) return alert("Kamu sudah absen masuk.");
-      const waktu = new Date();
-      riwayatData.push({ waktu: waktu.toISOString(), tipe: "masuk", user: currentUser });
-      statusAbsen.masuk = true;
-      renderRiwayat();
-      alert("✅ Absen masuk berhasil. Semangat bekerja!");
-    });
-
-    document.getElementById("btnPulang").addEventListener("click", () => {
-      if (!statusAbsen.masuk) return alert("Kamu belum absen masuk.");
-      if (statusAbsen.pulang) return alert("Kamu sudah absen pulang.");
-      const waktu = new Date();
-      riwayatData.push({ waktu: waktu.toISOString(), tipe: "pulang", user: currentUser });
-      statusAbsen.pulang = true;
-      renderRiwayat();
-      alert("✅ Absen pulang berhasil. Hati-hati di jalan!");
-    });
-
-    // Kirim pesan ke IT (simulasi)
-    document.getElementById("kirimChat").addEventListener("click", () => {
-      const pesan = chatPesan.value.trim();
-      if (!pesan) return alert("Isi pesan terlebih dahulu.");
-      alert("📨 Pesan berhasil dikirim ke IT (simulasi).");
-      chatPesan.value = "";
-    });
+    // Load riwayat (kosong karena simulasi)
+    function loadRiwayat() {
+      riwayatAbsensi = [];
+      updateRiwayat();
+    }
   </script>
 
 </body>
