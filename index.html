@@ -8,24 +8,24 @@
 <style>
   body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
-    color: white;
-    margin: 0; padding: 0;
+    background: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: #000;
+    padding: 1.5rem;
+    text-align: center;
+    color: #ffcc00;
+    font-size: 1.8rem;
+    font-weight: bold;
   }
   marquee {
     background: #ffcc00;
     color: #121212;
     padding: 10px;
     font-weight: bold;
-    font-size: 1rem;
-  }
-  header {
-    background: #121212;
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 2rem;
-    color: #ffcc00;
-    box-shadow: 0 3px 8px rgba(255, 204, 0, 0.3);
   }
   main {
     max-width: 480px;
@@ -34,15 +34,14 @@
   }
   .card {
     background: #1f1f1f;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.08);
-    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
   }
-  .card h2 {
-    margin-bottom: 1rem;
+  h2 {
     color: #ffcc00;
+    margin-bottom: 1rem;
   }
   input, button {
     width: 100%;
@@ -61,25 +60,23 @@
     color: #121212;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s ease;
   }
   button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+    transform: scale(1.03);
   }
   video {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 10px;
     margin-top: 1rem;
-    transform: scaleX(-1); /* mirror preview */
+    transform: scaleX(-1);
   }
   .popup {
     position: fixed;
-    top: 20%;
+    top: 25%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #ffcc00;
-    color: #121212;
+    color: #000;
     padding: 1rem 2rem;
     border-radius: 10px;
     font-weight: 700;
@@ -87,233 +84,209 @@
     display: none;
     z-index: 999;
   }
-  #riwayat {
-    max-height: 180px;
-    overflow-y: auto;
-    font-size: 0.9rem;
-    background: #292929;
-    padding: 1rem;
-    border-radius: 10px;
+
+  /* Timeline Riwayat */
+  .timeline {
+    position: relative;
+    padding-left: 20px;
     margin-top: 1rem;
+    border-left: 3px solid #ffcc00;
   }
-  ul { list-style-type: none; padding-left: 0; }
-  li { margin-bottom: 0.5rem; }
+  .timeline-entry {
+    margin-bottom: 1.2rem;
+    padding-left: 10px;
+  }
+  .timeline-entry .waktu {
+    font-size: 0.9rem;
+    color: #bbb;
+  }
+  .timeline-entry .tipe {
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 10px;
+  }
+  .masuk {
+    color: #00ff88;
+  }
+  .pulang {
+    color: #ff6666;
+  }
 </style>
 </head>
 <body>
 
-<marquee>🚀 Selamat datang di sistem absensi AF PRODUCTIONS! 🕐 Utamakan keselamatan dan semangat bekerja!</marquee>
+<marquee>📢 Silakan login & lakukan absen masuk/pulang. Utamakan keselamatan! 🚧</marquee>
 <header>AF PRODUCTIONS</header>
 
 <main>
-
   <section class="card" id="login-section">
-    <h2>🔐 Login Pengguna</h2>
-    <input type="text" id="noInduk" placeholder="No Induk"/>
-    <input type="password" id="password" placeholder="Password"/>
+    <h2>🔐 Login</h2>
+    <input type="text" id="noInduk" placeholder="No Induk" />
+    <input type="password" id="password" placeholder="Password" />
     <button id="loginBtn">Masuk</button>
   </section>
 
   <section class="card" id="absen-section" style="display:none;">
-    <h2>📍 Absen Karyawan</h2>
+    <h2>📍 Absen</h2>
     <button id="btnMasuk">🟢 Absen Masuk</button>
     <button id="btnPulang">🔴 Absen Pulang</button>
     <video id="video" autoplay muted playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
-    <div id="riwayat">
-      <strong>📄 Riwayat Absen:</strong>
-      <ul id="historyList"></ul>
+    <div class="timeline" id="historyList">
+      <p>📄 Riwayat absen akan tampil di sini...</p>
     </div>
   </section>
 
+  <section class="card" id="adminPanel" style="display:none;">
+    <h2>🛠 Panel Admin IT</h2>
+    <div id="adminData"></div>
+  </section>
 </main>
 
 <div class="popup" id="popupMsg"></div>
 
 <script>
-  // 30 karyawan + 1 admin IT
-  const users = {
-    "adminit": "admin123", // admin IT
-    "karyawan01": "pass123",
-    "karyawan02": "pass123",
-    "karyawan03": "pass123",
-    "karyawan04": "pass123",
-    "karyawan05": "pass123",
-    "karyawan06": "pass123",
-    "karyawan07": "pass123",
-    "karyawan08": "pass123",
-    "karyawan09": "pass123",
-    "karyawan10": "pass123",
-    "karyawan11": "pass123",
-    "karyawan12": "pass123",
-    "karyawan13": "pass123",
-    "karyawan14": "pass123",
-    "karyawan15": "pass123",
-    "karyawan16": "pass123",
-    "karyawan17": "pass123",
-    "karyawan18": "pass123",
-    "karyawan19": "pass123",
-    "karyawan20": "pass123",
-    "karyawan21": "pass123",
-    "karyawan22": "pass123",
-    "karyawan23": "pass123",
-    "karyawan24": "pass123",
-    "karyawan25": "pass123",
-    "karyawan26": "pass123",
-    "karyawan27": "pass123",
-    "karyawan28": "pass123",
-    "karyawan29": "pass123",
-    "karyawan30": "pass123"
+const users = {
+  "adminit": "admin123",
+  ...Object.fromEntries([...Array(30)].map((_, i) => [`karyawan${String(i+1).padStart(2,'0')}`, "pass123"]))
+};
+
+let currentUser = null;
+let historyData = [];
+
+const loginBtn = document.getElementById("loginBtn");
+const loginSection = document.getElementById("login-section");
+const absenSection = document.getElementById("absen-section");
+const adminPanel = document.getElementById("adminPanel");
+const historyList = document.getElementById("historyList");
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const popup = document.getElementById("popupMsg");
+
+loginBtn.onclick = () => {
+  const noInduk = document.getElementById("noInduk").value.trim();
+  const password = document.getElementById("password").value;
+  if (users[noInduk] === password) {
+    currentUser = noInduk;
+    loginSection.style.display = "none";
+    absenSection.style.display = "block";
+    if (noInduk === "adminit") {
+      adminPanel.style.display = "block";
+      loadAllData();
+    }
+    initCamera();
+    loadHistory();
+  } else {
+    alert("Login gagal.");
+  }
+};
+
+function initCamera() {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+    .then(stream => video.srcObject = stream)
+    .catch(() => alert("Kamera gagal diakses."));
+}
+
+function captureSelfie() {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d");
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0);
+  return canvas.toDataURL("image/png");
+}
+
+function getLocation() {
+  return new Promise((res, rej) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => res({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      err => rej(err)
+    );
+  });
+}
+
+function getToday() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function alreadyAbsen(tipe) {
+  return historyData.some(d => d.tipe === tipe && d.waktu.startsWith(getToday()));
+}
+
+async function absen(tipe) {
+  if (tipe === "Pulang" && !alreadyAbsen("Masuk")) {
+    alert("Belum absen masuk hari ini.");
+    return;
+  }
+  if (alreadyAbsen(tipe)) {
+    alert(`Sudah absen ${tipe} hari ini.`);
+    return;
+  }
+  const selfie = captureSelfie();
+  let lokasi;
+  try {
+    lokasi = await getLocation();
+  } catch {
+    alert("Aktifkan GPS.");
+    return;
+  }
+  const now = new Date();
+  const data = {
+    waktu: now.toISOString(),
+    tipe,
+    lokasi,
+    selfie
   };
+  historyData.unshift(data);
+  saveHistory();
+  renderHistory();
 
-  let currentUser = null;
-  let historyData = [];
+  popup.textContent = tipe === "Masuk" ? "✅ Selamat bekerja dan utamakan keselamatan!" : "👋 Hati-hati di jalan. Terima kasih!";
+  popup.style.display = "block";
+  setTimeout(() => popup.style.display = "none", 4000);
+}
 
-  const loginBtn = document.getElementById('loginBtn');
-  const loginSection = document.getElementById('login-section');
-  const absenSection = document.getElementById('absen-section');
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const popup = document.getElementById('popupMsg');
-  const historyList = document.getElementById('historyList');
-
-  loginBtn.onclick = () => {
-    const noInduk = document.getElementById('noInduk').value.trim();
-    const password = document.getElementById('password').value;
-    if (users[noInduk] === password) {
-      currentUser = noInduk;
-      console.log("Login berhasil:", currentUser);
-      loginSection.style.display = 'none';
-      absenSection.style.display = 'block';
-      initCamera();
-      loadHistory();
-    } else {
-      alert("Login gagal: No Induk atau Password salah.");
-    }
-  };
-
-  async function initCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-      video.srcObject = stream;
-      console.log("Kamera aktif");
-    } catch (err) {
-      alert("Kamera tidak tersedia.");
-      console.error(err);
-    }
+function saveHistory() {
+  localStorage.setItem("absen_" + currentUser, JSON.stringify(historyData));
+}
+function loadHistory() {
+  const saved = localStorage.getItem("absen_" + currentUser);
+  historyData = saved ? JSON.parse(saved) : [];
+  renderHistory();
+}
+function renderHistory() {
+  historyList.innerHTML = "";
+  if (historyData.length === 0) {
+    historyList.innerHTML = "<p>Tidak ada riwayat.</p>";
+    return;
   }
+  historyData.forEach(d => {
+    const waktu = new Date(d.waktu);
+    const entry = document.createElement("div");
+    entry.className = "timeline-entry";
+    entry.innerHTML = `<span class="tipe ${d.tipe.toLowerCase()}">[${d.tipe}]</span> <span class="waktu">${waktu.toLocaleString()}</span><br><small>📍 ${d.lokasi.lat.toFixed(4)}, ${d.lokasi.lng.toFixed(4)}</small>`;
+    historyList.appendChild(entry);
+  });
+}
+document.getElementById("btnMasuk").onclick = () => absen("Masuk");
+document.getElementById("btnPulang").onclick = () => absen("Pulang");
 
-  function captureSelfie() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    // Flip horizontal (mirror)
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
-    const dataUrl = canvas.toDataURL("image/png");
-    console.log("Selfie diambil");
-    return dataUrl;
-  }
-
-  async function getLocation() {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          console.log("Lokasi didapat:", pos.coords.latitude, pos.coords.longitude);
-          resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        err => {
-          console.error("Gagal dapat lokasi:", err);
-          reject(err);
-        }
-      );
-    });
-  }
-
-  function getTodayDateStr() {
-    const now = new Date();
-    return now.toISOString().split('T')[0]; // yyyy-mm-dd
-  }
-
-  function alreadyAbsen(tipe) {
-    const today = getTodayDateStr();
-    return historyData.some(entry => entry.tipe === tipe && entry.waktu.startsWith(today));
-  }
-
-  async function absen(tipe) {
-    console.log("Mulai absen tipe:", tipe);
-
-    if (alreadyAbsen(tipe)) {
-      alert(`Kamu sudah melakukan absen ${tipe} hari ini.`);
-      return;
-    }
-
-    const photo = captureSelfie();
-
-    let lokasi;
-    try {
-      lokasi = await getLocation();
-    } catch (e) {
-      alert("GPS tidak aktif atau gagal diakses.");
-      return;
-    }
-
-    const now = new Date();
-    const waktu = now.toISOString();
-    const data = {
-      waktu, tipe, lokasi, selfie: photo
-    };
-
-    historyData.unshift(data);
-    saveHistory();
-    renderHistory();
-
-    if (tipe === 'Masuk') {
-      popup.textContent = "✅ Selamat bekerja dan utamakan keselamatan!";
-    } else if (tipe === 'Pulang') {
-      popup.textContent = "👋 Hati-hati di jalan. Terima kasih sudah bekerja dengan baik!";
-    }
-
-    popup.style.display = "block";
-    setTimeout(() => popup.style.display = "none", 4000);
-  }
-
-  document.getElementById('btnMasuk').onclick = async () => {
-    console.log("Tombol absen masuk ditekan");
-    await absen('Masuk');
-  };
-
-  document.getElementById('btnPulang').onclick = async () => {
-    console.log("Tombol absen pulang ditekan");
-    await absen('Pulang');
-  };
-
-  function saveHistory() {
-    localStorage.setItem("absen_" + currentUser, JSON.stringify(historyData));
-  }
-
-  function loadHistory() {
-    const saved = localStorage.getItem("absen_" + currentUser);
-    if (saved) historyData = JSON.parse(saved);
-    renderHistory();
-  }
-
-  function renderHistory() {
-    historyList.innerHTML = "";
-    if (historyData.length === 0) {
-      historyList.innerHTML = "<li>Belum ada riwayat.</li>";
-    } else {
-      historyData.forEach(item => {
-        const date = new Date(item.waktu);
-        const waktuFormatted = date.toLocaleString();
-        const li = document.createElement('li');
-        li.textContent = `[${item.tipe}] ${waktuFormatted} — Lokasi: ${item.lokasi.lat.toFixed(4)}, ${item.lokasi.lng.toFixed(4)}`;
-        historyList.appendChild(li);
+function loadAllData() {
+  let html = "<ul>";
+  for (let key in localStorage) {
+    if (key.startsWith("absen_")) {
+      const user = key.replace("absen_", "");
+      const data = JSON.parse(localStorage.getItem(key));
+      data.forEach(d => {
+        const waktu = new Date(d.waktu).toLocaleString();
+        html += `<li><strong>${user}</strong> - [${d.tipe}] ${waktu} - Lokasi: ${d.lokasi.lat.toFixed(4)}, ${d.lokasi.lng.toFixed(4)}</li>`;
       });
     }
   }
+  html += "</ul>";
+  document.getElementById("adminData").innerHTML = html || "Tidak ada data.";
+}
 </script>
-
 </body>
 </html>
