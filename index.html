@@ -55,7 +55,7 @@
       padding: 0.5em;
       border-bottom: 1px solid #555;
     }
-    .admin-tools {
+    .admin-tools, .admin-login {
       margin-top: 2em;
       background: #222;
       padding: 1em;
@@ -81,6 +81,15 @@
     <div id="riwayatList"></div>
   </div>
 
+  <!-- LOGIN ADMIN BARU -->
+  <div class="admin-login">
+    <h3>🔐 Login Admin</h3>
+    <input type="text" id="adminUser" placeholder="No Induk Admin">
+    <input type="password" id="adminPass" placeholder="Password Admin">
+    <button onclick="loginAdmin()">Login Admin</button>
+  </div>
+
+  <!-- PANEL ADMIN -->
   <div class="admin-tools" id="adminPanel" style="display: none;">
     <h3>⚙️ Admin Panel (IT Only)</h3>
     <button onclick="downloadExcel()">📥 Download Data Excel</button>
@@ -131,7 +140,6 @@ function absen(tipe) {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    // Simpan riwayat lokal
     const waktu = new Date().toLocaleString();
     riwayat.push({ waktu, tipe, lat, lng });
     statusAbsen[tipe] = true;
@@ -139,7 +147,6 @@ function absen(tipe) {
     localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
     tampilkanRiwayat();
 
-    // Kirim ke webhook (dummy)
     fetch(dummyWebhook, {
       method: "POST",
       body: JSON.stringify({
@@ -154,7 +161,6 @@ function absen(tipe) {
       }
     });
 
-    // Tampilkan pop-up
     if (tipe === "masuk") {
       alert("✅ Selamat bekerja dan utamakan keselamatan!");
     } else {
@@ -191,16 +197,19 @@ function kirimChat() {
   document.getElementById("chatPesan").value = "";
 }
 
-function cekAdmin() {
-  const user = document.getElementById("noInduk").value.trim();
-  if (user === "IT001") {
+// ✅ Fungsi Login Admin Baru
+function loginAdmin() {
+  const user = document.getElementById("adminUser").value.trim();
+  const pass = document.getElementById("adminPass").value.trim();
+
+  if (user === "IT001" && pass === "admin123") {
     document.getElementById("adminPanel").style.display = "block";
+    alert("✅ Login Admin berhasil!");
   } else {
-    document.getElementById("adminPanel").style.display = "none";
+    alert("❌ No Induk atau Password salah.");
   }
 }
 
-document.getElementById("noInduk").addEventListener("input", cekAdmin);
 window.onload = tampilkanRiwayat;
 </script>
 
