@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Absensi AF PRODUCTIONS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+      color: white;
+      min-height: 100vh;
+    }
+    marquee {
+      background: #ffcc00;
+      color: #121212;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    header {
+      background: #121212;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2rem;
+      color: #ffcc00;
+      letter-spacing: 2px;
+      box-shadow: 0 3px 8px rgba(255, 204, 0, 0.3);
+    }
+    main {
+      max-width: 480px;
+      margin: auto;
+      padding: 2rem 1rem;
+    }
+    .card {
+      background: #1f1f1f;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 20px rgba(255, 204, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 0 30px rgba(255, 204, 0, 0.15);
+    }
+    .card h2 {
+      margin-bottom: 1rem;
+      color: #ffcc00;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input {
+      background: #292929;
+      color: white;
+    }
+    button {
+      background: linear-gradient(to right, #ffcc00, #ff6600);
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+    }
+    video {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    .popup {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffcc00;
+      color: #121212;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-weight: 700;
+      box-shadow: 0 0 20px #ff9900;
+      display: none;
+      z-index: 999;
+    }
+    #riwayat {
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      background: #292929;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+    ul { list-style-type: none; padding-left: 0; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+
+<marquee behavior="scroll" direction="left" scrollamount="6">
+  🚀 Selamat datang di sistem absensi AF PRODUCTIONS! 🕐 Utamakan keselamatan dan semangat bekerja!
+</marquee>
+
+<header>AF PRODUCTIONS</header>
+
+<main>
+
+  <section class="card" id="login-section">
+    <h2>🔐 Login Pengguna</h2>
+    <input type="text" id="nama" placeholder="Nama"/>
+    <input type="password" id="password" placeholder="Password"/>
+    <button id="loginBtn">Masuk</button>
+  </section>
+
+  <section class="card" id="absen-section" style="display:none;">
+    <h2>📍 Absen Karyawan</h2>
+    <button id="btnMasuk">🟢 Absen Masuk</button>
+    <button id="btnPulang">🔴 Absen Pulang</button>
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="riwayat">
+      <strong>📄 Riwayat Absen:</strong>
+      <ul id="historyList"></ul>
+    </div>
+  </section>
+
+</main>
+
+<div class="popup" id="popupMsg">✅ Selamat bekerja dan utamakan keselamatan!</div>
+
+<script>
+  const users = {
+    "12345": "password1",
+    "it": "adminit",
+    "hrd": "hrd"
+  };
+
+  let currentUser = null;
+  let historyData = [];
+
+  const loginBtn = document.getElementById('loginBtn');
+  const loginSection = document.getElementById('login-section');
+  const absenSection = document.getElementById('absen-section');
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const popup = document.getElementById('popupMsg');
+  const historyList = document.getElementById('historyList');
+
+  loginBtn.onclick = () => {
+    const nama = document.getElementById('nama').value.trim();
+    const password = document.getElementById('password').value;
+    if (users[nama] === password) {
+      currentUser = nama;
+      loginSection.style.display = 'none';
+      absenSection.style.display = 'block';
+      initCamera();
+      loadHistory();
+    } else {
+      alert("Login gagal: Nama atau Password salah.");
+    }
+  };
+
+  async function initCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+      video.srcObject = stream;
+    } catch {
+      alert("Kamera tidak tersedia.");
+    }
+  }
+
+  function captureSelfie() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    return canvas.toDataURL("image/png");
+  }
+
+  async function getLocation() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        err => reject(err)
+      );
+    });
+  }
+
+  async function absen(tipe) {
+    const photo = captureSelfie();
+    let lokasi;
+    try {
+      lokasi = await getLocation();
+    } catch {
+      alert("GPS tidak aktif atau gagal diakses.");
+      return;
+    }
+    const waktu = new Date().toLocaleString();
+    const data = {
+      waktu, tipe, lokasi, selfie: photo
+    };
+    historyData.unshift(data);
+    saveHistory();
+    renderHistory();
+    popup.style.display = "block";
+    setTimeout(() => popup.style.display = "none", 3000);
+  }
+
+  document.getElementById('btnMasuk').onclick = () => absen('Masuk');
+  document.getElementById('btnPulang').onclick = () => absen('Pulang');
+
+  function saveHistory() {
+    localStorage.setItem("absen_" + currentUser, JSON.stringify(historyData));
+  }
+
+  function loadHistory() {
+    const saved = localStorage.getItem("absen_" + currentUser);
+    if (saved) historyData = JSON.parse(saved);
+    renderHistory();
+  }
+
+  function renderHistory() {
+    historyList.innerHTML = "";
+    if (historyData.length === 0) {
+      historyList.innerHTML = "<li>Belum ada riwayat.</li>";
+    } else {
+      historyData.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `[${item.tipe}] ${item.waktu} — Lokasi: ${item.lokasi.lat.toFixed(4)}, ${item.lokasi.lng.toFixed(4)}`;
+        historyList.appendChild(li);
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
