@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Absen AF PRODUCTIONS</title>
   <style>
+    :root {
+      --primary: #0d6efd;
+      --success: #198754;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --gray: #f8f9fa;
+      --dark: #212529;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -13,30 +22,32 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
+      background-color: var(--gray);
+      color: var(--dark);
     }
 
     header {
-      background-color: #007bff;
+      background-color: var(--primary);
       color: white;
       text-align: center;
       padding: 1.5rem;
       font-size: 1.8rem;
       font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .marquee-container {
       overflow: hidden;
-      background: #ffeeba;
-      color: #856404;
-      padding: 0.5rem;
+      background: var(--warning);
+      color: #212529;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
     }
 
     .marquee {
       display: inline-block;
       white-space: nowrap;
-      animation: scroll-left 10s linear infinite;
+      animation: scroll-left 15s linear infinite;
     }
 
     @keyframes scroll-left {
@@ -53,37 +64,77 @@
       margin: 2rem auto;
       background: white;
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     input, textarea, button {
-      display: block;
       width: 100%;
       margin-top: 1rem;
       padding: 0.75rem;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
     }
 
     button {
-      background-color: #28a745;
+      background-color: var(--primary);
       color: white;
       border: none;
       cursor: pointer;
+      font-weight: bold;
     }
 
     button:hover {
-      background-color: #218838;
+      background-color: #0b5ed7;
+    }
+
+    .riwayat, .admin-tools, .chat {
+      margin-top: 2rem;
+    }
+
+    .riwayat h3, .admin-tools h3, .chat h3 {
+      margin-bottom: 1rem;
+      color: var(--primary);
     }
 
     .riwayat-item {
-      background: #e9ecef;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
+      background: var(--gray);
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid var(--primary);
       border-radius: 4px;
       font-size: 0.95rem;
+    }
+
+    .admin-tools button {
+      background-color: var(--success);
+    }
+
+    .admin-tools button:hover {
+      background-color: #157347;
+    }
+
+    .chat textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      header {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -91,15 +142,15 @@
 
   <header>ABSEN AF PRODUCTIONS</header>
   <div class="marquee-container">
-    <div class="marquee">📢 Masukkan teks berjalan di sini! Misalnya pengumuman penting atau semangat kerja 💪</div>
+    <div class="marquee">📢 Semangat bekerja! Jangan lupa absen masuk & pulang tepat waktu 💪</div>
   </div>
 
   <div class="container">
     <form id="absenForm">
-      <input type="text" id="noInduk" placeholder="No Induk" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="button" id="btnMasuk">Absen Masuk</button>
-      <button type="button" id="btnPulang">Absen Pulang</button>
+      <input type="text" id="noInduk" placeholder="🆔 No Induk" required />
+      <input type="password" id="password" placeholder="🔒 Password" required />
+      <button type="button" id="btnMasuk">✅ Absen Masuk</button>
+      <button type="button" id="btnPulang" style="background-color: var(--danger);">⏹️ Absen Pulang</button>
     </form>
 
     <div class="riwayat">
@@ -108,14 +159,14 @@
     </div>
 
     <div class="admin-tools" id="adminPanel" style="display: none;">
-      <h3>⚙️ Admin Panel (IT Only)</h3>
-      <button id="downloadExcel">📥 Download Data Excel</button>
+      <h3>⚙️ Admin Panel</h3>
+      <button id="downloadExcel">📥 Unduh Data Excel</button>
     </div>
 
     <div class="chat">
-      <h3>💬 Chat ke IT</h3>
-      <textarea id="chatPesan" placeholder="Ada kendala? Tulis di sini..."></textarea>
-      <button id="kirimChat">Kirim ke IT</button>
+      <h3>💬 Kirim Pesan ke IT</h3>
+      <textarea id="chatPesan" placeholder="Tulis kendala atau pesan Anda di sini..."></textarea>
+      <button id="kirimChat">📨 Kirim</button>
     </div>
   </div>
 
@@ -131,7 +182,6 @@
       document.getElementById("btnPulang").addEventListener("click", () => absen("pulang"));
       document.getElementById("kirimChat").addEventListener("click", kirimChat);
       document.getElementById("downloadExcel").addEventListener("click", downloadExcel);
-
       document.getElementById("noInduk").addEventListener("input", cekAdmin);
     });
 
