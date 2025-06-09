@@ -2,13 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Absen AF PRODUCTIONS</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: linear-gradient(to right, #1c1c1c, #2c2c2c);
       color: #fff;
     }
@@ -45,15 +44,26 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .riwayat, .admin-tools, .admin-login, .chat {
+    .riwayat {
       margin-top: 2em;
       background: #333;
       padding: 1em;
       border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
     }
     .riwayat-item {
       padding: 0.5em;
       border-bottom: 1px solid #555;
+    }
+    .admin-tools {
+      margin-top: 2em;
+      background: #222;
+      padding: 1em;
+      border-radius: 10px;
+    }
+    .chat {
+      margin-top: 2em;
     }
   </style>
 </head>
@@ -66,19 +76,13 @@
 
   <input type="text" id="noInduk" placeholder="No Induk"/>
   <input type="password" id="password" placeholder="Password"/>
+  
   <button onclick="absen('masuk')">Absen Masuk</button>
   <button onclick="absen('pulang')">Absen Pulang</button>
 
   <div class="riwayat" id="riwayatBox">
     <h3>📋 Riwayat Absen</h3>
-    <div id="riwayatList"></div>
-  </div>
-
-  <div class="admin-login">
-    <h3>🔐 Login Admin</h3>
-    <input type="text" id="adminUser" placeholder="No Induk Admin">
-    <input type="password" id="adminPass" placeholder="Password Admin">
-    <button onclick="loginAdmin()">Login Admin</button>
+    <div id="riwayatList">Belum ada data absensi.</div>
   </div>
 
   <div class="admin-tools" id="adminPanel" style="display: none;">
@@ -105,11 +109,11 @@ let statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || {
 
 function tampilkanRiwayat() {
   const box = document.getElementById("riwayatList");
-  box.innerHTML = "";
   if (riwayat.length === 0) {
-    box.innerHTML = "<p>Belum ada riwayat absen.</p>";
+    box.innerHTML = "Belum ada data absensi.";
     return;
   }
+  box.innerHTML = "";
   riwayat.forEach(r => {
     box.innerHTML += `<div class="riwayat-item">[${r.waktu}] - ${r.tipe.toUpperCase()} - Lokasi: ${r.lat.toFixed(5)}, ${r.lng.toFixed(5)}</div>`;
   });
@@ -142,6 +146,7 @@ function absen(tipe) {
     localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
     tampilkanRiwayat();
 
+    // Kirim ke webhook Google Apps Script
     fetch(dummyWebhook, {
       method: "POST",
       body: JSON.stringify({
@@ -192,21 +197,19 @@ function kirimChat() {
   document.getElementById("chatPesan").value = "";
 }
 
-// ✅ Fungsi login admin
-function loginAdmin() {
-  const user = document.getElementById("adminUser").value.trim();
-  const pass = document.getElementById("adminPass").value.trim();
-
-  if (user === "IT001" && pass === "admin123") {
+function cekAdmin() {
+  const user = document.getElementById("noInduk").value.trim();
+  if (user === "IT001") {
     document.getElementById("adminPanel").style.display = "block";
-    alert("✅ Login Admin berhasil!");
   } else {
-    alert("❌ No Induk atau Password salah.");
+    document.getElementById("adminPanel").style.display = "none";
   }
 }
 
+document.getElementById("noInduk").addEventListener("input", cekAdmin);
 window.onload = tampilkanRiwayat;
 </script>
 
 </body>
 </html>
+a
