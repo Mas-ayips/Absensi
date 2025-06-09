@@ -3,29 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ABSEN AF PRODUCTIONS</title>
+  <title>Absen AF PRODUCTIONS</title>
   <style>
     :root {
       --primary: #0d6efd;
-      --danger: #dc3545;
       --success: #198754;
+      --warning: #ffc107;
+      --danger: #dc3545;
       --gray: #f8f9fa;
       --dark: #212529;
       --bg-light: #ffffff;
       --bg-dark: #121212;
-      --text-light: #ffffff;
+      --text-light: #f1f1f1;
       --text-dark: #212529;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
       background-color: var(--bg-light);
       color: var(--text-dark);
-      transition: 0.3s ease;
+      transition: background 0.3s, color 0.3s;
     }
 
-    body.dark-mode {
+    body.dark {
       background-color: var(--bg-dark);
       color: var(--text-light);
     }
@@ -33,82 +39,26 @@
     header {
       background-color: var(--primary);
       color: white;
-      padding: 1.2rem;
       text-align: center;
-      font-size: 1.5rem;
+      padding: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       position: relative;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: var(--gray);
-      border-radius: 10px;
-    }
-
-    .dark-mode .container {
-      background: #1e1e1e;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    video {
-      width: 100%;
-      border-radius: 10px;
-      transform: scaleX(-1);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .toggle-theme {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      z-index: 999;
+    .marquee-container {
+      overflow: hidden;
+      background: var(--warning);
+      color: #212529;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
     }
 
     .marquee {
-      background-color: var(--success);
-      color: white;
-      font-weight: bold;
-      padding: 0.6rem;
-      overflow: hidden;
-      position: relative;
-      white-space: nowrap;
-    }
-
-    .marquee span {
       display: inline-block;
-      animation: scroll-left 12s linear infinite;
+      white-space: nowrap;
+      animation: scroll-left 20s linear infinite;
     }
 
     @keyframes scroll-left {
@@ -116,102 +66,215 @@
       100% { transform: translateX(-100%); }
     }
 
-    .timestamp {
-      text-align: center;
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    body.dark .container {
+      background: #1f1f1f;
+    }
+
+    input, textarea, button {
+      width: 100%;
       margin-top: 1rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #0b5ed7;
+    }
+
+    .toggle-theme {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 3rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    body.dark .login-container {
+      background: #1f1f1f;
+    }
+
+    .riwayat-item {
+      background: var(--gray);
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid var(--primary);
+      border-radius: 4px;
       font-size: 0.95rem;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 1rem;
     }
 
     .watermark {
       text-align: center;
-      font-size: 0.8rem;
       margin-top: 3rem;
-      opacity: 0.6;
+      font-size: 0.85rem;
+      color: gray;
+    }
+
+    @media (max-width: 600px) {
+      .container, .login-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      header {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-
-  <header>
-    ABSEN AF PRODUCTIONS
-    <button class="toggle-theme" onclick="toggleMode()">🌗 Mode</button>
-  </header>
-
-  <div class="marquee"><span>📣 Selamat datang! Jangan lupa absen masuk & pulang dengan selfie 📸 | Tetap semangat dan jaga kedisiplinan 💪</span></div>
-
-  <div class="container" id="loginPage">
-    <h3>🔐 Login</h3>
-    <input type="text" id="username" placeholder="🆔 No Induk / Username" />
-    <input type="password" id="password" placeholder="🔒 Password" />
-    <button onclick="login()">Masuk</button>
+  <header>ABSEN AF PRODUCTIONS</header>
+  <div class="marquee-container">
+    <div class="marquee">📢 Selamat datang! Jangan lupa absen masuk & pulang tepat waktu 💼 | Bersama membangun kedisiplinan dan tanggung jawab 🙌</div>
   </div>
 
-  <div class="container hidden" id="absenPage">
-    <h3>📸 Kamera Absen</h3>
+  <div id="loginPage" class="login-container">
+    <h2>🔐 Login</h2>
+    <input type="text" id="loginUser" placeholder="🆔 No Induk" required>
+    <input type="password" id="loginPass" placeholder="🔒 Password" required>
+    <button onclick="login()">🔓 Masuk</button>
+  </div>
+
+  <div id="mainPage" class="container" style="display:none;">
+    <h3 id="liveTime"></h3>
+    <form id="absenForm">
+      <button type="button" onclick="absen('masuk')">✅ Absen Masuk</button>
+      <button type="button" onclick="absen('pulang')" style="background-color: var(--danger);">⏹️ Absen Pulang</button>
+    </form>
+
     <video id="camera" autoplay playsinline></video>
-    <button onclick="ambilFoto('masuk')">✅ Absen Masuk</button>
-    <button onclick="ambilFoto('pulang')" style="background-color: var(--danger);">⏹️ Absen Pulang</button>
-    <div class="timestamp" id="timestamp"></div>
+
+    <div class="riwayat">
+      <h3>📋 Riwayat Absen</h3>
+      <div id="riwayatList">Memuat data...</div>
+    </div>
+
+    <div class="watermark">©AYIP'S</div>
   </div>
 
-  <canvas id="canvas" class="hidden"></canvas>
-
-  <div class="watermark">© AYIP'S</div>
+  <button class="toggle-theme" onclick="toggleMode()">🌗 Mode</button>
 
   <script>
     const users = {
-      "12345": "password123",
-      "67890": "admin2025",
-      "alice": "qwerty",
-      "bob": "123456"
+      "AYIP001": "12345",
+      "IT001": "admin123"
     };
 
-    const loginPage = document.getElementById("loginPage");
-    const absenPage = document.getElementById("absenPage");
-    const video = document.getElementById("camera");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    const statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || { masuk: false, pulang: false };
 
     function login() {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
       if (users[user] && users[user] === pass) {
-        loginPage.classList.add("hidden");
-        absenPage.classList.remove("hidden");
+        localStorage.setItem("user", user);
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("mainPage").style.display = "block";
         startCamera();
+        tampilkanRiwayat();
       } else {
-        alert("❌ Username atau Password salah.");
+        alert("❌ Login gagal. Periksa kembali No Induk dan Password.");
       }
     }
 
-    function startCamera() {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-          video.srcObject = stream;
-        })
-        .catch(err => alert("Gagal mengakses kamera: " + err));
+    function absen(tipe) {
+      const user = localStorage.getItem("user");
+      if (!user) return alert("Silakan login terlebih dahulu.");
+      if (tipe === "pulang" && !statusAbsen.masuk) return alert("Kamu belum absen masuk.");
+      if (statusAbsen[tipe]) return alert(`Kamu sudah absen ${tipe}.`);
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          console.log(`[SIMULASI] ${tipe.toUpperCase()} oleh ${user} di lokasi: ${lat}, ${lng}`);
+          alert(tipe === "masuk" ? "✅ Selamat bekerja!" : "✅ Terima kasih, hati-hati di jalan!");
+          statusAbsen[tipe] = true;
+          localStorage.setItem("statusAbsen", JSON.stringify(statusAbsen));
+          tampilkanRiwayat();
+        },
+        () => alert("Gagal mendapatkan lokasi.")
+      );
     }
 
-    function ambilFoto(tipe) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      ctx.translate(video.videoWidth, 0);
-      ctx.scale(-1, 1);
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      const dataUrl = canvas.toDataURL("image/png");
+    function tampilkanRiwayat() {
+      const user = localStorage.getItem("user");
+      const box = document.getElementById("riwayatList");
       const waktu = new Date().toLocaleString();
-      document.getElementById("timestamp").innerText = `✅ Absen ${tipe.toUpperCase()} berhasil pada ${waktu}`;
-      console.log(`📷 Foto absen ${tipe}:`, dataUrl);
-      alert(`✅ Simulasi absen ${tipe} berhasil!\nLihat console untuk gambar.`);
+      box.innerHTML = `
+        <div class="riwayat-item">[${waktu}] - MASUK - ${user}</div>
+        <div class="riwayat-item">[${waktu}] - PULANG - ${user}</div>
+      `;
+    }
+
+    function startCamera() {
+      const video = document.getElementById("camera");
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+        .then(stream => {
+          video.srcObject = stream;
+          video.style.transform = "scaleX(-1)";
+        })
+        .catch(err => {
+          alert("Kamera tidak tersedia: " + err.message);
+        });
     }
 
     function toggleMode() {
-      document.body.classList.toggle("dark-mode");
+      document.body.classList.toggle("dark");
     }
-  </script>
 
+    function updateClock() {
+      const now = new Date();
+      const jam = now.toLocaleTimeString();
+      const tanggal = now.toLocaleDateString();
+      document.getElementById("liveTime").textContent = `🕒 ${tanggal} ${jam}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
 </body>
 </html>
