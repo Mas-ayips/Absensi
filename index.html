@@ -6,12 +6,12 @@
   <title>Absensi AF PRODUCTIONS</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
       color: white;
-      min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
     marquee {
       background: #ffcc00;
@@ -26,7 +26,6 @@
       text-align: center;
       font-size: 2rem;
       color: #ffcc00;
-      letter-spacing: 2px;
       box-shadow: 0 3px 8px rgba(255, 204, 0, 0.3);
     }
     main {
@@ -41,9 +40,6 @@
       margin-bottom: 1.5rem;
       box-shadow: 0 0 20px rgba(255, 204, 0, 0.08);
       transition: all 0.3s ease;
-    }
-    .card:hover {
-      box-shadow: 0 0 30px rgba(255, 204, 0, 0.15);
     }
     .card h2 {
       margin-bottom: 1rem;
@@ -106,17 +102,14 @@
 </head>
 <body>
 
-<marquee behavior="scroll" direction="left" scrollamount="6">
-  🚀 Selamat datang di sistem absensi AF PRODUCTIONS! 🕐 Utamakan keselamatan dan semangat bekerja!
-</marquee>
-
+<marquee>🚀 Selamat datang di sistem absensi AF PRODUCTIONS! 🕐 Utamakan keselamatan dan semangat bekerja!</marquee>
 <header>AF PRODUCTIONS</header>
 
 <main>
 
   <section class="card" id="login-section">
     <h2>🔐 Login Pengguna</h2>
-    <input type="text" id="nama" placeholder="Nama"/>
+    <input type="text" id="noInduk" placeholder="No Induk"/>
     <input type="password" id="password" placeholder="Password"/>
     <button id="loginBtn">Masuk</button>
   </section>
@@ -135,13 +128,13 @@
 
 </main>
 
-<div class="popup" id="popupMsg">✅ Selamat bekerja dan utamakan keselamatan!</div>
+<div class="popup" id="popupMsg"></div>
 
 <script>
   const users = {
     "12345": "password1",
     "it": "adminit",
-    "hrd": "hrd"
+    "hrd": "adminhrd"
   };
 
   let currentUser = null;
@@ -156,16 +149,16 @@
   const historyList = document.getElementById('historyList');
 
   loginBtn.onclick = () => {
-    const nama = document.getElementById('nama').value.trim();
+    const noInduk = document.getElementById('noInduk').value.trim();
     const password = document.getElementById('password').value;
-    if (users[nama] === password) {
-      currentUser = nama;
+    if (users[noInduk] === password) {
+      currentUser = noInduk;
       loginSection.style.display = 'none';
       absenSection.style.display = 'block';
       initCamera();
       loadHistory();
     } else {
-      alert("Login gagal: Nama atau Password salah.");
+      alert("Login gagal: No Induk atau Password salah.");
     }
   };
 
@@ -194,7 +187,22 @@
     });
   }
 
+  function getTodayDateStr() {
+    const now = new Date();
+    return now.toISOString().split('T')[0]; // yyyy-mm-dd
+  }
+
+  function alreadyAbsen(tipe) {
+    const today = getTodayDateStr();
+    return historyData.some(entry => entry.tipe === tipe && entry.waktu.startsWith(today));
+  }
+
   async function absen(tipe) {
+    if (alreadyAbsen(tipe)) {
+      alert(`Kamu sudah melakukan absen ${tipe} hari ini.`);
+      return;
+    }
+
     const photo = captureSelfie();
     let lokasi;
     try {
@@ -203,15 +211,25 @@
       alert("GPS tidak aktif atau gagal diakses.");
       return;
     }
-    const waktu = new Date().toLocaleString();
+
+    const now = new Date();
+    const waktu = now.toISOString(); // Simpan dalam ISO format
     const data = {
       waktu, tipe, lokasi, selfie: photo
     };
+
     historyData.unshift(data);
     saveHistory();
     renderHistory();
+
+    if (tipe === 'Masuk') {
+      popup.textContent = "✅ Selamat bekerja dan utamakan keselamatan!";
+    } else {
+      popup.textContent = "👋 Hati-hati di jalan. Terima kasih sudah bekerja dengan baik!";
+    }
+
     popup.style.display = "block";
-    setTimeout(() => popup.style.display = "none", 3000);
+    setTimeout(() => popup.style.display = "none", 4000);
   }
 
   document.getElementById('btnMasuk').onclick = () => absen('Masuk');
@@ -233,8 +251,10 @@
       historyList.innerHTML = "<li>Belum ada riwayat.</li>";
     } else {
       historyData.forEach(item => {
+        const date = new Date(item.waktu);
+        const waktuFormatted = date.toLocaleString();
         const li = document.createElement('li');
-        li.textContent = `[${item.tipe}] ${item.waktu} — Lokasi: ${item.lokasi.lat.toFixed(4)}, ${item.lokasi.lng.toFixed(4)}`;
+        li.textContent = `[${item.tipe}] ${waktuFormatted} — Lokasi: ${item.lokasi.lat.toFixed(4)}, ${item.lokasi.lng.toFixed(4)}`;
         historyList.appendChild(li);
       });
     }
