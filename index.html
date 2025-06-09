@@ -45,7 +45,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .riwayat {
+    .riwayat, .admin-tools, .admin-login, .chat {
       margin-top: 2em;
       background: #333;
       padding: 1em;
@@ -54,12 +54,6 @@
     .riwayat-item {
       padding: 0.5em;
       border-bottom: 1px solid #555;
-    }
-    .admin-tools, .admin-login {
-      margin-top: 2em;
-      background: #222;
-      padding: 1em;
-      border-radius: 10px;
     }
   </style>
 </head>
@@ -72,7 +66,6 @@
 
   <input type="text" id="noInduk" placeholder="No Induk"/>
   <input type="password" id="password" placeholder="Password"/>
-  
   <button onclick="absen('masuk')">Absen Masuk</button>
   <button onclick="absen('pulang')">Absen Pulang</button>
 
@@ -81,7 +74,6 @@
     <div id="riwayatList"></div>
   </div>
 
-  <!-- LOGIN ADMIN BARU -->
   <div class="admin-login">
     <h3>🔐 Login Admin</h3>
     <input type="text" id="adminUser" placeholder="No Induk Admin">
@@ -89,7 +81,6 @@
     <button onclick="loginAdmin()">Login Admin</button>
   </div>
 
-  <!-- PANEL ADMIN -->
   <div class="admin-tools" id="adminPanel" style="display: none;">
     <h3>⚙️ Admin Panel (IT Only)</h3>
     <button onclick="downloadExcel()">📥 Download Data Excel</button>
@@ -115,6 +106,10 @@ let statusAbsen = JSON.parse(localStorage.getItem("statusAbsen")) || {
 function tampilkanRiwayat() {
   const box = document.getElementById("riwayatList");
   box.innerHTML = "";
+  if (riwayat.length === 0) {
+    box.innerHTML = "<p>Belum ada riwayat absen.</p>";
+    return;
+  }
   riwayat.forEach(r => {
     box.innerHTML += `<div class="riwayat-item">[${r.waktu}] - ${r.tipe.toUpperCase()} - Lokasi: ${r.lat.toFixed(5)}, ${r.lng.toFixed(5)}</div>`;
   });
@@ -197,7 +192,7 @@ function kirimChat() {
   document.getElementById("chatPesan").value = "";
 }
 
-// ✅ Fungsi Login Admin Baru
+// ✅ Fungsi login admin
 function loginAdmin() {
   const user = document.getElementById("adminUser").value.trim();
   const pass = document.getElementById("adminPass").value.trim();
